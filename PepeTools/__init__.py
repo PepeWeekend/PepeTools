@@ -3,6 +3,7 @@
 import bpy
 # from . import settings
 from PepeTools.ui import template
+from PepeTools.ui import restart
 from PepeTools.util.debug_msg import outputDebugString
 
 ADDON_FOLDER_NAME = "PepeTools"
@@ -45,6 +46,7 @@ classes = [
 
 register_list = [
     template,
+    restart,
 ]
 
 

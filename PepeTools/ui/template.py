@@ -45,7 +45,7 @@ class PETOOLS_PT_Template(Panel):
 
 class MyButton1(Operator):
     bl_idname = "pepe.btn_kind"
-    bl_label = "wait_transfar"  # メニューに表示される名前
+    bl_label = "MyButton1"
 
     def execute(self, context):
         outputDebugString("Call")
