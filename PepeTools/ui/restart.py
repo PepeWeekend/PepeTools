@@ -1,8 +1,16 @@
-import bpy
-from bpy.types import Panel
+
+try:
+    import bpy
+    from bpy.types import Panel
+except ImportError:
+    print(__doc__)
+    import sys
+    sys.exit()
 
 from .. import settings
 from PepeTools.util.debug_msg import outputDebugString
+
+# ----------------------------------PT------------------------------------------
 
 
 class PETOOLS_PT_restart(Panel):
@@ -46,6 +54,7 @@ def reboot_blender(self, context):
     pass
 
 
+# ----------------------------------CLS-----------------------------------------
 # List of classes to register
 classes = [
     PETOOLS_PT_restart,
@@ -59,7 +68,6 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    # Register the property group
     # bpy.types.Scene.templateProps = PointerProperty(type=PETOOLS_PT_TemplateProps)
 
 

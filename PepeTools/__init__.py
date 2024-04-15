@@ -1,6 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import bpy
+
+try:
+    import bpy
+except ImportError:
+    print(__doc__)
+    import sys
+    sys.exit()
+
 # from . import settings
 from PepeTools.ui import template
 from PepeTools.ui import restart
