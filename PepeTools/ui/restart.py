@@ -1,14 +1,17 @@
-
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 try:
     import bpy
     from bpy.types import Panel
 except ImportError:
     print(__doc__)
-    import sys
-    sys.exit()
+    raise
 
+import sys
 from .. import settings
-from PepeTools.util.debug_msg import outputDebugString
+from PepeTools.util.debug_msg import OutputDebugString as ODS
+from PepeTools.util.debug_msg import call_log_decorator
+from PepeTools.util.get_classes import get_classes
 
 # ----------------------------------PT------------------------------------------
 
@@ -27,16 +30,17 @@ class PETOOLS_PT_restart(Panel):
         layout = self.layout
         # props = context.scene.templateProps
 
-        layout.label(text="まだ再起動しません(終了します)")
+        layout.label(text="まだ再起動しません(終了しますん)")
         layout.operator("pepe.reboot_blender", text="Restart", icon="MESH_CUBE")
 
         self.draw_restart_button(context)
 
+    # 要素毎にまとめて関数化するのがよさそうです
     def draw_restart_button(self, context):
         layout = self.layout
         layout.operator("pepe.reboot_blender", text="Restart Blender")
 
-    # class RestartBlenderOperator(bpy.types.Operator):
+    # ボタンを押した時の処理を記述する
     class Operator(bpy.types.Operator):
         bl_idname = "pepe.reboot_blender"
         bl_label = "Restart Blender"
@@ -44,37 +48,31 @@ class PETOOLS_PT_restart(Panel):
         # bl_options = {'REGISTER'}
 
         def execute(self, context):
-            outputDebugString("Call", 'Error')
-            reboot_blender(self, context)
+            ODS().output("Call", ODS.MsgType.Error)
+            self.reboot_blender(context)
             return {'FINISHED'}
 
-
-def reboot_blender(self, context):
-    # bpy.ops.wm.quit_blender()
-    pass
+        def reboot_blender(self, context):
+            # bpy.ops.wm.quit_blender()
+            pass
 
 
 # ----------------------------------CLS-----------------------------------------
 # List of classes to register
-classes = [
-    PETOOLS_PT_restart,
-    PETOOLS_PT_restart.Operator,
-]
+classes = list(get_classes(sys.modules[__name__], __name__))
 
 
+@call_log_decorator
 def register():
-    outputDebugString("Call")
-    # Register the panel
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    # Register the property group
     # bpy.types.Scene.templateProps = PointerProperty(type=PETOOLS_PT_TemplateProps)
 
 
-# Unregister the panel
+@call_log_decorator
 def unregister():
-    outputDebugString("Call")
-    # Unregister the panel
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
