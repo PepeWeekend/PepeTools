@@ -11,6 +11,8 @@ except ImportError:
 # from . import settings
 from PepeTools.ui import template
 from PepeTools.ui import restart
+from PepeTools.ui import display_file_size
+
 from PepeTools.util.debug_msg import outputDebugString
 
 ADDON_FOLDER_NAME = "PepeTools"
@@ -54,6 +56,7 @@ classes = [
 register_list = [
     template,
     restart,
+    display_file_size,
 ]
 
 
