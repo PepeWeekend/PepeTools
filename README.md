@@ -1,5 +1,4 @@
-PepeTools
-=========
+# PepeTools
 
 PepeTools is the free and open sourc Blender Add-on.
 
@@ -7,8 +6,7 @@ This is a collection of tools for Blender designed to extend the Blender side pa
 
 Support Blender 4.1.0
 
-機能一覧
---------
+## 機能一覧
 
 > [!WARNING]
 > 常に破壊的な変更が発生する可能性があります。
@@ -19,8 +17,14 @@ Support Blender 4.1.0
 |ウェイト値設定 | ウェイト値を設定するためのパネル | 未着手 |
 |ウェイト転写操作 | ウェイトモックとウェイト転写先メッシュを指定し、ウェイト値を転写する操作パネル | 未着手 |
 
-開発環境セットアップ
-------------------
+## Release Note
+
+### バージョン 0.0.0 (2024年X月XX日)
+
+- まだありません
+
+
+## 開発環境セットアップガイド
 
 - Python 3.11.7をインストール
 
@@ -48,15 +52,13 @@ pip install fake-bpy-module-4.0
         }
 ```
 
-デバッグ方法
-------------
+### デバッグ方法
 
 - VSCodeでCtrl + Shift + Pを押して「Blender: start」を選択
 - 起動するBlender.exeを選択(事前設定した"Blender Install Path.exe"が表示される)
 - Blenderが起動し、VSCodeのデバッグツールでデバッグが可能になる
 
-トラブルシューティング
---------------------
+### トラブルシューティング
 
 > 「fake-bpy-mmodule-4.0」をインストールしたがパスが通らない
 
@@ -66,8 +68,7 @@ pip install fake-bpy-module-4.0
   2. Ctrl + Shift + Pを押して「Python: Select Interpreter」を選択
   3. 「fake-bpy-mmodule-4.0」をインストールしたPythonを選択
 
-License
--------
+## License
 
 Licensed under the MIT License.
 

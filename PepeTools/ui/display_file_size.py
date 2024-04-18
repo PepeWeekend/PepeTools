@@ -1,8 +1,13 @@
 # import stand alone modules
-import blf
-import bpy
-
+import os
 import sys
+import bpy
+from bpy_types import PropertyGroup
+from bpy.props import FloatProperty
+from bpy.props import FloatVectorProperty
+import blf
+
+
 from .. import settings
 from PepeTools.util.debug_msg import OutputDebugString as ODS
 from PepeTools.util.debug_msg import call_log_decorator
@@ -15,10 +20,47 @@ font_info = {
 
 counter = 0
 
+
+# -------------------------------PROPERTY---------------------------------------
+
+class PETOOLS_PT_show_file_size_props(PropertyGroup):
+    # bpy.props
+    # Bool        : BoolProperty(default=True, name="Check Box")
+    # String      : StringProperty(default="hoge", name="String")
+    # Int         : IntProperty(default=44, name="Int",min=0,max=100)
+    # Float       : FloatProperty(default=3.14, name="Float",min=0)
+    # FloatVector : FloatVectorProperty(default=(0.1,0.2,0.3), name="name")
+    # Enum        : EnumProperty(default="Scene",name="Enum", items= [
+    #                               ("Selected","Selected","Selected","RESTRICT_SELECT_OFF",0),
+    #                               ("Scene","Scene","Scene","SCENE_DATA",1),
+    #                               ("All_Data","All Data","All Data","FILE",2),
+    #                           ])
+    # Pointer     : PointerProperty(name="Target Object",type=bpy.types.Object)
+    file_limit: FloatProperty(default=3.14, min=0)
+    font_color: FloatVectorProperty(default=(1.0, 0.0, 0.0), min=0.0, max=1.0, subtype='COLOR_GAMMA')
+
+
 # リージョン情報の取得
 
 
 def get_region(context, area_type, region_type):
+    """
+    指定されたエリアとリージョンの情報を取得
+
+    Parameters
+    ----------
+    context : bpy.types.Context
+        コンテキスト
+    area_type : str
+        エリアのタイプ
+    region_type : str
+        リージョンのタイプ
+
+    Returns
+    -------
+    bpy.types.Region
+        リージョン情報
+    """
     region = None
     area = None
 
@@ -38,7 +80,9 @@ def get_region(context, area_type, region_type):
     return region
 
 
-class SAMPLE35_OT_show_file_size(bpy.types.Operator):
+# ----------------------------------OT------------------------------------------
+
+class PETOOLS_OT_show_file_size(bpy.types.Operator):
     bl_idname = "object.sample35_show_datetime"
     bl_label = "日時を表示"
     bl_description = "日時を表示します"
@@ -69,19 +113,34 @@ class SAMPLE35_OT_show_file_size(bpy.types.Operator):
 
     @classmethod
     def __draw(self, context):
+        props = context.scene.show_file_size_props
         global counter
         font_id = 0
         counter = counter + 1
 
+        #
         region = get_region(context, 'VIEW_3D', 'WINDOW')
 
-        blf.position(font_id, 200, region.height - 580, 0)
-        # blf.position(font_id, 200, 580, 0)
-        blf.size(font_id, 16.0)
-        blf.draw(font_id, f"Hello World : {counter}")
+        # ファイルサイズ取得
+        filepath = bpy.data.filepath
+        file_size = 0.0
+        if filepath:
+            file_size = os.path.getsize(filepath)
+            file_size = file_size / 1024 / 1024
+
+        # 表示色判定
+        if file_size < props.file_limit:
+            blf.color(font_id, 1.0, 1.0, 1.0, 1.0)
+        else:
+            blf.color(font_id, props.font_color[0], props.font_color[1], props.font_color[2], 1.0)
+
+        blf.position(font_id, 65, region.height - 250, 0)
+        blf.size(font_id, 11.0)
+        blf.shadow(font_id, 3, 1.0, 1.0, 1.0, 1.0)
+        blf.draw(font_id, f"ファイルサイズ : {file_size:.2} MB")
 
     def invoke(self, context, event):
-        op_cls = SAMPLE35_OT_show_file_size
+        op_cls = PETOOLS_OT_show_file_size
 
         if context.area.type == 'VIEW_3D':
             if not op_cls.is_running():
@@ -97,6 +156,7 @@ class SAMPLE35_OT_show_file_size(bpy.types.Operator):
             return {'CANCELLED'}
 
 
+# ----------------------------------PT------------------------------------------
 class PETOOLS_PT_show_file_size(bpy.types.Panel):
 
     bl_space_type = 'VIEW_3D'
@@ -107,38 +167,27 @@ class PETOOLS_PT_show_file_size(bpy.types.Panel):
     bl_context = "objectmode"
 
     def draw(self, context):
-        op_cls = SAMPLE35_OT_show_file_size
+        props = context.scene.show_file_size_props
+        op_cls = PETOOLS_OT_show_file_size
 
         layout = self.layout
         # [開始] / [停止] ボタンを追加
         if not op_cls.is_running():
-            layout.operator(op_cls.bl_idname, text="開始", icon="PLAY")
+            layout.operator(op_cls.bl_idname, text="表示", icon="PLAY")
         else:
-            layout.operator(op_cls.bl_idname, text="終了", icon="PAUSE")
+            layout.operator(op_cls.bl_idname, text="非表示", icon="PAUSE")
+
+        layout.separator()
+        layout.label(text="警告表示設定:")
+        layout.prop(props, "file_limit", text="警告上限(MB)")
+        layout.prop(props, "font_color", text="表示色")
+
+        layout.label(text="表示設定:")
+        layout.label(text="表示位置:")
 
 
-def init():
-    """init function - runs once"""
-
-    font_info["font_id"] = 0
-
-    # set the font drawing routine to run every frame
-    font_info["handler"] = bpy.types.SpaceView3D.draw_handler_add(
-        draw_callback_px, (None, None), 'WINDOW', 'POST_PIXEL')
-
-
-def draw_callback_px(self, context):
-    """Draw on the viewports"""
-    # region = get_region(context, 'VIEW_3D', 'WINDOW')
-
-    # BLF drawing routine
-    font_id = font_info["font_id"]
-    # blf.position(font_id, 200, region.height - 580, 0)
-    blf.position(font_id, 200, 580, 0)
-    blf.size(font_id, 16.0)
-    blf.draw(font_id, "Hello World")
-
-
+# --------------------------------REGISTER--------------------------------------
+# List of classes to register
 classes = list(get_classes(sys.modules[__name__], __name__))
 
 
@@ -150,6 +199,7 @@ def register():
 
     # Register the property group
     # bpy.types.Scene.templateProps = PointerProperty(type=PETOOLS_PT_TemplateProps)
+    bpy.types.Scene.show_file_size_props = bpy.props.PointerProperty(type=PETOOLS_PT_show_file_size_props)
 
 
 @call_log_decorator
@@ -159,6 +209,7 @@ def unregister():
 
     # Unregister the property group
     # del bpy.types.Scene.templateProps
+    del bpy.types.Scene.show_file_size_props
 
 
 if __name__ == '__main__':
