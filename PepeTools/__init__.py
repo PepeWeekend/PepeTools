@@ -12,6 +12,7 @@ except ImportError:
 from PepeTools.ui import template
 from PepeTools.ui import restart
 from PepeTools.ui import display_file_size
+from PepeTools.ui import wait_set_button
 
 from PepeTools.util.debug_msg import outputDebugString
 
@@ -34,19 +35,22 @@ bl_info = {
     "category": "Object",
 }
 
-outputDebugString("# ----------------------------------", 'System')
-outputDebugString("# Activation Pepe Tools", 'System')
+outputDebugString("# ====================================================", 'System')
+outputDebugString("# Start Activation Pepe Tools", 'System')
 outputDebugString(f"#  - author    : {bl_info['author']}", 'System')
 outputDebugString(f"#  - version   : {bl_info['version']}", 'System')
-outputDebugString("# ----------------------------------", 'System')
+outputDebugString("# ====================================================", 'System')
 
 if 'bpy' in locals():
     from importlib import reload
     import sys
     for k, v in list(sys.modules.items()):
         if k.startswith(ADDON_FOLDER_NAME):
-            outputDebugString(f"reload module : {v}", 'System')
-            reload(v)
+            if v.__name__ != __name__:
+                outputDebugString(f"reload module : {v}", 'System')
+                reload(v)
+            else:
+                outputDebugString(f"not reload module : {v}", 'System')
 
 
 classes = [
@@ -57,6 +61,7 @@ register_list = [
     template,
     restart,
     display_file_size,
+    wait_set_button,
 ]
 
 
