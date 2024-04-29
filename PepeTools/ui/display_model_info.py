@@ -6,22 +6,18 @@ try:
     from bpy.props import StringProperty
     from bpy.props import BoolProperty
     from bpy.props import IntProperty
-    from bpy.props import FloatProperty
 
 except ImportError:
     print(__doc__)
     raise
 
 import os
-import sys
-import time
 import datetime
 
 from .. import settings
 from PepeTools.util.debug_msg import OutputDebugString as ODS
 from PepeTools.util.debug_msg import call_log_decorator
-from PepeTools.util.get_classes import get_classes
-from PepeTools.util.get_classes import get_classes_of_class
+# from PepeTools.util.get_classes import get_classes
 
 
 # -------------------------------PROPERTY---------------------------------------
@@ -49,11 +45,6 @@ class PETOOLS_PT_display_model_info(Panel):
     bl_category = settings.TAB_NAME
     bl_label = "ファイル内モデル情報表示/保存"
     bl_options = {'DEFAULT_CLOSED'}
-
-    timer_start_time = FloatProperty(name="Timer Start Time", default=0.0)
-    timer_running = BoolProperty(name="Timer Running", default=False)
-    save_interval = IntProperty(default=10, min=1, name="Save Interval")
-    timer_handle = None
 
     # ---------------------------------コレクション内オブジェクト情報--------------------------------------
 
@@ -132,6 +123,38 @@ class PETOOLS_PT_display_model_info(Panel):
 
             return {'FINISHED'}
 
+    def save_handler(scene):
+        ODS().output("File Save Process Start......", ODS.MsgType.Info)
+        try:
+            op_cls = PETOOLS_PT_display_model_info
+
+            op_cls.collection.clear()
+            op_cls.project.clear()
+
+            try:
+                # 編集ファイル情報更新
+                op_cls._update_file_info(scene)
+            except Exception as e:
+                ODS().output(f"File Save Process Error [_update_file_info] : {e}", ODS.MsgType.Error)
+                return
+
+            # ファイル内情報の整合性確認
+            err_msgs = op_cls._check_file_different()
+
+            # ファイル保存
+            try:
+                op_cls._save_file(scene, err_msgs)
+            except Exception as e:
+                ODS().output(f"File Save Process Error [_save_file] : {e}", ODS.MsgType.Error)
+                return
+
+            ODS().output("File Save Process Success", ODS.MsgType.Info)
+
+        except Exception as e:
+            ODS().output(f"File Save Process Error : {e}", ODS.MsgType.Error)
+
+        pass
+
     def draw(self, context):
         '''描画処理
         args:
@@ -152,39 +175,6 @@ class PETOOLS_PT_display_model_info(Panel):
 
         # パネル描画
         self._draw_panel(context, layout, err_msgs)
-
-    @classmethod
-    def timer_callback(scene):
-        ODS().output(f"CallBack!!", ODS.MsgType.Info)
-        bpy.app.timers.register(scene.timer_callback, first_interval=10.0)
-        pass
-
-    # タイマーの開始
-    @classmethod
-    def start_timer(scene):
-        scene.timer_start_time = time.time()
-        if scene.timer_running is not True and scene.timer_handle is None:
-            scene.timer_running = True
-            scene.timer_handle = bpy.app.timers.register(scene.timer_callback, first_interval=10.0)
-            ODS().output(f"Start Timer", ODS.MsgType.Info)
-        else:
-            ODS().output(f"Not Start Timer", ODS.MsgType.Info)
-
-    # タイマーの停止
-    @classmethod
-    def stop_timer(scene):
-        try:
-            if scene.timer_handle is not None:
-                ODS().output(f"Run Stop Timer............", ODS.MsgType.Info)
-                bpy.app.timers.unregister(scene.timer_handle)
-                scene.timer_handle = None
-                ODS().output(f"Success Stop Timer", ODS.MsgType.Info)
-            else:
-                ODS().output(f"Yet Stop Timer", ODS.MsgType.Info)
-        except ValueError:
-            ODS().output(f"Error Stop Timer", ODS.MsgType.Error)
-            pass
-        scene.timer_running = False
 
     @classmethod
     def _update_file_info(self, context):
@@ -235,19 +225,11 @@ class PETOOLS_PT_display_model_info(Panel):
         return:
             None
         '''
-        props = context.scene.display_model_imfo_props
         # --------------------------------------------------------------------------------------
         # Infomation
         # --------------------------------------------------------------------------------------
         # ファイル保存ボタン
         layout.operator("pepe.btn_kind2", text="ファイル保存", icon="FILE_TICK")
-
-        layout.prop(props, "is_auto_save", text="自動保存")
-        if props.is_auto_save is True:
-            self.start_timer()
-            layout.prop(props, "save_interval", text="保存期間(分)")
-        else:
-            self.stop_timer()
 
         # ファイル内基本情報
         info_lines = []
@@ -425,6 +407,10 @@ def register():
     # Register the property group
     bpy.types.Scene.display_model_imfo_props = bpy.props.PointerProperty(type=PETOOLS_PT_display_model_info_props)
 
+    # ファイルセーブハンドラ登録
+    ODS().output(f"File Save Handler append to List", ODS.MsgType.Info)
+    bpy.app.handlers.save_post.append(PETOOLS_PT_display_model_info.save_handler)
+
 
 @ call_log_decorator
 def unregister():
@@ -437,7 +423,11 @@ def unregister():
     # プロパティグループ削除
     del bpy.types.Scene.display_model_imfo_props
 
-    # PETOOLS_PT_display_model_info.stop_timer()
+    # ファイルセーブハンドラ削除
+    try:
+        bpy.app.handlers.save_post.remove(PETOOLS_PT_display_model_info.save_handler)
+    except Exception as e:
+        ODS().output(f"File Save Handler is not find in List : {e}", ODS.MsgType.Error)
 
 
 if __name__ == "__main__":

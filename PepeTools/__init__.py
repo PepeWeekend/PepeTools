@@ -1,6 +1,13 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+# ファイル名: __init__.py
+# 説明: PepeToolsアドオンのエントリーポイント
+# 作成者: Pepe Weekend (kaff.brand.pepe@gmail.com)
+# バージョン: 1.0.0
+# ライセンス: MIT License (https://opensource.org/licenses/MIT)
+# 著作権: (c) 2024 Pepe Weekend
+#
+# 更新履歴:
+#   - 2024-04-30: 初版作成
 try:
     import bpy
 except ImportError:
@@ -8,20 +15,18 @@ except ImportError:
     import sys
     sys.exit()
 
-# from . import settings
-from PepeTools.ui import template
-from PepeTools.ui import restart
-from PepeTools.ui import display_file_size
-from PepeTools.ui import wait_set_button
-from PepeTools.ui import display_model_info
-
+from . import settings
 from PepeTools.util.debug_msg import outputDebugString
+from PepeTools.settings import logger
 
 ADDON_FOLDER_NAME = "PepeTools"
 ADDON_FOLDER_NAME_UI = "ui"
 ADDON_FOLDER_NAME_OPRATOR = "op"
 ADDON_FOLDER_NAME_UTILITY = "util"
 
+# -----------------------------------------------------------------------------------------------
+# プロパティクラスの登録
+# -----------------------------------------------------------------------------------------------
 bl_info = {
     "name": "Pepe Tools",
     "author": "Pepe",
@@ -31,17 +36,27 @@ bl_info = {
     "description": "Tools for Pepe",
     "warning": "開発中",
     "support": "COMMUNITY",
-    "wiki_url": "",
+    "wiki_url": "https://github.com/PepeWeekend/PepeTools",
     "tracker_url": "",
     "category": "Object",
 }
 
-outputDebugString("# ====================================================", 'System')
-outputDebugString("# Start Activation Pepe Tools", 'System')
-outputDebugString(f"#  - author    : {bl_info['author']}", 'System')
-outputDebugString(f"#  - version   : {bl_info['version']}", 'System')
-outputDebugString("# ====================================================", 'System')
+# -----------------------------------------------------------------------------------------------
+# add-on有効化時メッセージ
+# -----------------------------------------------------------------------------------------------
+start_msg_lists = [
+    "# ====================================================",
+    "# Start Activation Pepe Tools",
+    f"#  - author    : {bl_info['author']}",
+    f"#  - version   : {bl_info['version']}",
+    "# ====================================================",
+]
+for msg in start_msg_lists:
+    logger.output(msg, logger.MsgType.System)
 
+# -----------------------------------------------------------------------------------------------
+# モジュールのリロード
+# -----------------------------------------------------------------------------------------------
 if 'bpy' in locals():
     from importlib import reload
     import sys
@@ -54,20 +69,20 @@ if 'bpy' in locals():
                 outputDebugString(f"not reload module : {v}", 'System')
 
 
+# --------------------------------REGISTER-------------------------------------------------------
+# __init__.py内クラス登録
 classes = [
     # PepeToolKet_AddonPreferences
 ]
 
-register_list = [
-    template,
-    restart,
-    display_file_size,
-    wait_set_button,
-    display_model_info
-]
+# Add-on有効化情報
+# setting.pyのENABLE_FUNCTION_LISTで有効化する機能を設定
+register_list = settings.ENABLE_FUNCTION_LIST
 
 
 def register():
+    '''登録処理
+    '''
     outputDebugString("PepeTools Regist Start!!", 'System')
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -82,6 +97,8 @@ def register():
 
 
 def unregister():
+    '''登録解除処理
+    '''
     outputDebugString("PepeTools UnRegist Start!!", 'System')
     for lst in register_list:
         if lst.unregister is not None:
@@ -96,4 +113,6 @@ def unregister():
 
 
 if __name__ == "__main__":
+    '''Add-on登録時処理
+    '''
     register()
