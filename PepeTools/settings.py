@@ -9,7 +9,7 @@ PepeToolsはPepe Weekendによって開発されたBlenderのツールセット�
 
 @author Pepe Weekend
 @version 1.0.0
-@license MIT License (https://opensource.org/licenses/MIT)
+@license GNU General Public License v3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 @date 2024-04-30 初版作成
 """
 TAB_NAME = "PepeTools"
@@ -22,9 +22,9 @@ from PepeTools.util.debug_msg import OutputDebugString as dbg
 from PepeTools.ui import wait_set_button
 from PepeTools.ui import display_model_info
 
-'''
+"""
 List of functions to enable.
-'''
+"""
 ENABLE_FUNCTION_LIST = [
     # template,               # Display the template panel.
     # restart,                # Restart the addon.

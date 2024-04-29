@@ -9,7 +9,7 @@ PepeToolsはPepe Weekendによって開発されたBlenderのツールセット�
 
 @author Pepe Weekend
 @version 1.0.0
-@license MIT License (https://opensource.org/licenses/MIT)
+@license GNU General Public License v3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
 @date 2024-04-30 初版作成
 """
 try:
