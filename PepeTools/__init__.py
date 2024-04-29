@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
-# ファイル名: __init__.py
-# 説明: PepeToolsアドオンのエントリーポイント
-# 作成者: Pepe Weekend (kaff.brand.pepe@gmail.com)
-# バージョン: 1.0.0
-# ライセンス: MIT License (https://opensource.org/licenses/MIT)
-# 著作権: (c) 2024 Pepe Weekend
-#
-# 更新履歴:
-#   - 2024-04-30: 初版作成
+"""
+PepeToolsアドオンのエントリーポイント
+
+@file __init__.py
+@brief PepeToolsアドオンのエントリーポイント
+@details このファイルはPepeToolsアドオンのエントリーポイントです。
+PepeToolsはPepe Weekendによって開発されたBlenderのツールセットです。
+
+@author Pepe Weekend
+@version 1.0.0
+@license MIT License (https://opensource.org/licenses/MIT)
+@date 2024-04-30 初版作成
+"""
+
 try:
     import bpy
 except ImportError:
@@ -15,8 +20,7 @@ except ImportError:
     import sys
     sys.exit()
 
-from . import settings
-from PepeTools.util.debug_msg import outputDebugString
+from PepeTools.settings import ENABLE_FUNCTION_LIST
 from PepeTools.settings import logger
 
 ADDON_FOLDER_NAME = "PepeTools"
@@ -63,10 +67,10 @@ if 'bpy' in locals():
     for k, v in list(sys.modules.items()):
         if k.startswith(ADDON_FOLDER_NAME):
             if v.__name__ != __name__:
-                outputDebugString(f"reload module : {v}", 'System')
+                logger.output(f"reload module : {v}", logger.MsgType.System)
                 reload(v)
             else:
-                outputDebugString(f"not reload module : {v}", 'System')
+                logger.output(f"not reload module : {v}", logger.MsgType.System)
 
 
 # --------------------------------REGISTER-------------------------------------------------------
@@ -77,13 +81,14 @@ classes = [
 
 # Add-on有効化情報
 # setting.pyのENABLE_FUNCTION_LISTで有効化する機能を設定
-register_list = settings.ENABLE_FUNCTION_LIST
+register_list = ENABLE_FUNCTION_LIST
 
 
 def register():
-    '''登録処理
+    '''!
+    @brief アドオンを登録する関数
     '''
-    outputDebugString("PepeTools Regist Start!!", 'System')
+    logger.output("PepeTools Regist Start!!", logger.MsgType.System)
     for cls in classes:
         bpy.utils.register_class(cls)
 
@@ -91,28 +96,26 @@ def register():
         if lst.register is not None:
             lst.register()
         else:
-            outputDebugString(f"{lst} has no register method", 'Error')
+            logger.output(f"{lst} has no register method", logger.MsgType.Error)
 
-    outputDebugString("PepeTools Registed Finish!!", 'System')
+    logger.output("PepeTools Registed Finish!!", logger.MsgType.System)
 
 
 def unregister():
-    '''登録解除処理
+    '''アドオンの登録を解除する関数
     '''
-    outputDebugString("PepeTools UnRegist Start!!", 'System')
+    logger.output("PepeTools UnRegist Start!!", logger.MsgType.System)
     for lst in register_list:
         if lst.unregister is not None:
             lst.unregister()
         else:
-            outputDebugString(f"{lst} has no unregister method", 'Error')
+            logger.output(f"{lst} has no unregister method", logger.MsgType.Error)
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    outputDebugString("PepeTools UnRegisted Finish!!", 'System')
+    logger.output("PepeTools UnRegisted Finish!!", logger.MsgType.System)
 
 
 if __name__ == "__main__":
-    '''Add-on登録時処理
-    '''
     register()
