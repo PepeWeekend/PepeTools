@@ -12,7 +12,6 @@ PepeToolsはPepe Weekendによって開発されたBlenderのツールセット�
 @license MIT License (https://opensource.org/licenses/MIT)
 @date 2024-04-30 初版作成
 """
-
 try:
     import bpy
 except ImportError:
@@ -63,8 +62,8 @@ for msg in start_msg_lists:
 # -----------------------------------------------------------------------------------------------
 if 'bpy' in locals():
     from importlib import reload
-    import sys
-    for k, v in list(sys.modules.items()):
+    from sys import modules
+    for k, v in list(modules.items()):
         if k.startswith(ADDON_FOLDER_NAME):
             if v.__name__ != __name__:
                 logger.output(f"reload module : {v}", logger.MsgType.System)
@@ -86,12 +85,15 @@ register_list = ENABLE_FUNCTION_LIST
 
 def register():
     '''!
-    @brief アドオンを登録する関数
+    @brief アドオン登録
     '''
     logger.output("PepeTools Regist Start!!", logger.MsgType.System)
+
+    # クラス登録
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    # 機能登録
     for lst in register_list:
         if lst.register is not None:
             lst.register()
@@ -102,15 +104,19 @@ def register():
 
 
 def unregister():
-    '''アドオンの登録を解除する関数
+    '''!
+    @brief アドオン解除
     '''
     logger.output("PepeTools UnRegist Start!!", logger.MsgType.System)
+
+    # 機能解除
     for lst in register_list:
         if lst.unregister is not None:
             lst.unregister()
         else:
             logger.output(f"{lst} has no unregister method", logger.MsgType.Error)
 
+    # クラス解除
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
