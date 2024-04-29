@@ -13,6 +13,7 @@ from PepeTools.ui import template
 from PepeTools.ui import restart
 from PepeTools.ui import display_file_size
 from PepeTools.ui import wait_set_button
+from PepeTools.ui import display_model_info
 
 from PepeTools.util.debug_msg import outputDebugString
 
@@ -62,6 +63,7 @@ register_list = [
     restart,
     display_file_size,
     wait_set_button,
+    display_model_info
 ]
 
 
