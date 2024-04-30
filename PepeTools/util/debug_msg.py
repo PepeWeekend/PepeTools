@@ -83,3 +83,6 @@ def call_log_decorator(func):
         output_string("Info", caller_file, caller_line, caller_method, f"to {define_file} [{define_line:>4}] : args {args}")
         return func(*args, **kwargs)
     return wrapper
+
+
+logger = OutputDebugString()

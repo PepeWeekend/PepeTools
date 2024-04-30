@@ -15,9 +15,8 @@ import os
 import datetime
 
 from .. import settings
-from PepeTools.util.debug_msg import OutputDebugString as ODS
-from PepeTools.util.debug_msg import call_log_decorator
-# from PepeTools.util.get_classes import get_classes
+from ..util.debug_msg import call_log_decorator
+from ..util.debug_msg import logger
 
 
 # -------------------------------PROPERTY---------------------------------------
@@ -124,7 +123,8 @@ class PETOOLS_PT_display_model_info(Panel):
             return {'FINISHED'}
 
     def save_handler(scene):
-        ODS().output("File Save Process Start......", ODS.MsgType.Info)
+        logger.output("File Save Process Start......", logger.MsgType.Info)
+
         try:
             op_cls = PETOOLS_PT_display_model_info
 
@@ -135,7 +135,7 @@ class PETOOLS_PT_display_model_info(Panel):
                 # 編集ファイル情報更新
                 op_cls._update_file_info(scene)
             except Exception as e:
-                ODS().output(f"File Save Process Error [_update_file_info] : {e}", ODS.MsgType.Error)
+                logger().output(f"File Save Process Error [_update_file_info] : {e}", logger.MsgType.Error)
                 return
 
             # ファイル内情報の整合性確認
@@ -145,13 +145,13 @@ class PETOOLS_PT_display_model_info(Panel):
             try:
                 op_cls._save_file(scene, err_msgs)
             except Exception as e:
-                ODS().output(f"File Save Process Error [_save_file] : {e}", ODS.MsgType.Error)
+                logger.output(f"File Save Process Error [_save_file] : {e}", logger.MsgType.Error)
                 return
 
-            ODS().output("File Save Process Success", ODS.MsgType.Info)
+            logger.output("File Save Process Success", logger.MsgType.Info)
 
         except Exception as e:
-            ODS().output(f"File Save Process Error : {e}", ODS.MsgType.Error)
+            logger.output(f"File Save Process Error : {e}", logger.MsgType.Error)
 
         pass
 
@@ -219,7 +219,7 @@ class PETOOLS_PT_display_model_info(Panel):
         file_size = 0
         try:
             file_size = os.path.getsize(bpy.data.filepath) / 1000 / 1000  # Byte -> MB
-        except Exception as e:
+        except Exception:
             pass
 
         self.project.file_size_mb = file_size
@@ -364,6 +364,8 @@ class PETOOLS_PT_display_model_info(Panel):
 
         shutil.move(tmp_file.name, output_file_path)
 
+        logger.output(f"Infomation File Save : {output_file_path}", logger.MsgType.Info)
+
         # --------------------------------------------------------------------------------------
         # Infomation
         # --------------------------------------------------------------------------------------
@@ -412,14 +414,14 @@ def register():
     クラス登録
     """
     for cls in classes:
-        ODS().output(f"Register Class : {cls}", ODS.MsgType.Info)
+        logger.output(f"Register Class : {cls}", logger.MsgType.Info)
         bpy.utils.register_class(cls)
 
     # Register the property group
     bpy.types.Scene.display_model_imfo_props = bpy.props.PointerProperty(type=PETOOLS_PT_display_model_info_props)
 
     # ファイルセーブハンドラ登録
-    ODS().output("File Save Handler append to List", ODS.MsgType.Info)
+    logger.output("File Save Handler append to List", logger.MsgType.Info)
     bpy.app.handlers.save_post.append(PETOOLS_PT_display_model_info.save_handler)
 
 
@@ -438,7 +440,7 @@ def unregister():
     try:
         bpy.app.handlers.save_post.remove(PETOOLS_PT_display_model_info.save_handler)
     except Exception as e:
-        ODS().output(f"File Save Handler is not find in List : {e}", ODS.MsgType.Error)
+        logger.output(f"File Save Handler is not find in List : {e}", logger.MsgType.Error)
 
 
 if __name__ == "__main__":
