@@ -21,5 +21,4 @@ jobs:
         pip install fake-bpy-module-4.0
     - name: Analysing the code with pylint
       run: |
-        from pylint import epylint as lint
-        lint.py_run('$(git ls-files "*.py") --disable=C0301')
+        pylint $(git ls-files "*.py") --disable=C0301
