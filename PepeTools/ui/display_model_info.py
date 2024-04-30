@@ -216,7 +216,13 @@ class PETOOLS_PT_display_model_info(Panel):
             self.project.material_names.append(mat.name)
 
         # Get the file size
-        self.project.file_size_mb = os.path.getsize(bpy.data.filepath) / 1000 / 1000  # Byte -> MB
+        file_size = 0
+        try:
+            file_size = os.path.getsize(bpy.data.filepath) / 1000 / 1000  # Byte -> MB
+        except Exception as e:
+            pass
+
+        self.project.file_size_mb = file_size
 
     def _draw_panel(self, context, layout, err_msgs):
         '''パネルを描画する
@@ -258,6 +264,11 @@ class PETOOLS_PT_display_model_info(Panel):
             disp_err_msg : list[str]
         '''
         disp_err_msg: list[self.error_messaga] = []
+
+        # 未保存のファイルを捜査している場合
+        if self.project.file_size_mb == 0:
+            ERROR_MSG_NON_FILE = "編集中のファイルが未保存状態です"
+            disp_err_msg.append(self.error_messaga(ERROR_MSG_NON_FILE))
 
         # ファイル内のマテリアル定義数が異なる場合
         ERROR_MSG_MATERIALS_DIFFERENT = "ファイル内に余分なマテリアルが含まれています"
@@ -408,7 +419,7 @@ def register():
     bpy.types.Scene.display_model_imfo_props = bpy.props.PointerProperty(type=PETOOLS_PT_display_model_info_props)
 
     # ファイルセーブハンドラ登録
-    ODS().output(f"File Save Handler append to List", ODS.MsgType.Info)
+    ODS().output("File Save Handler append to List", ODS.MsgType.Info)
     bpy.app.handlers.save_post.append(PETOOLS_PT_display_model_info.save_handler)
 
 
@@ -431,4 +442,5 @@ def unregister():
 
 
 if __name__ == "__main__":
-    register()
+    # register()
+    pass

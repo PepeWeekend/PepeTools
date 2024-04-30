@@ -83,4 +83,5 @@ def unregister():
 
 # Entry point for testing the add-on
 if __name__ == "__main__":
-    register()
+    # register()
+    pass
