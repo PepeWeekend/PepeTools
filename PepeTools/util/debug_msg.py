@@ -8,7 +8,7 @@ from enum import Enum
 import functools
 
 
-def outputDebugString(msg, type="Message"):
+def outputDebugString(msg: str, type: str = "Message"):
     #
     # 利用しない方向で修正する
     #
@@ -39,18 +39,21 @@ def outputDebugString(msg, type="Message"):
 
 
 class OutputDebugString:
-    """デバッグメッセージを出力するクラス。
+    """デバッグメッセージ出力クラス。
 
-    Attributes:
-        MsgType (Enum): メッセージの種類を表す列挙型です。
+    """
+
+    class MsgType(Enum):
+        """メッセージ種類
+
+        Attributes:
             Info: 情報メッセージ
             Message: 一般的なメッセージ
             Warning: 警告メッセージ
             System: システムメッセージ
             Error: エラーメッセージ
-    """
 
-    class MsgType(Enum):
+        """
         Info = "Info"
         Message = "Message"
         Warning = "Warning"
@@ -58,7 +61,7 @@ class OutputDebugString:
         Error = "Error"
 
     def output(self, msg, msgType=MsgType.Message):
-        """デバッグメッセージを出力します。
+        """デバッグメッセージを出力
 
         Args:
             msg (str): 出力するメッセージ
@@ -77,7 +80,7 @@ class OutputDebugString:
         return msg
 
 
-def output_string(type, fileName, line, method, msg):
+def output_string(type: str, fileName: str, line: int, method: str, msg: str):
     """メッセージを出力
 
     Args:
