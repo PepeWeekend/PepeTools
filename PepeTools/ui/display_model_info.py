@@ -21,6 +21,71 @@ from .. import settings
 from PepeTools.util.debug_msg import logger
 from PepeTools.util.debug_msg import call_log_decorator
 
+# ---------------------------------コレクション内オブジェクト情報--------------------------------------
+
+
+class collection:
+    """コレクション内オブジェクト情報
+
+    """
+    total_vertex_count: int = 0      # 頂点数
+    total_material_count: int = 0    # マテリアル数
+    total_triangle_count: int = 0    # 三角形数
+    total_sarface_count: int = 0     # 面数
+    mesh_names: list[str] = []       # メッシュ名
+    material_names: list[str] = []   # マテリアル名
+    mesh_infos: list[dict] = []
+
+    def clear(self):
+        """初期化
+
+        """
+        self.total_vertex_count = 0
+        self.total_material_count = 0
+        self.total_triangle_count = 0
+        self.total_sarface_count = 0
+        self.mesh_names = []
+        self.material_names = []
+        self.mesh_infos = []
+
+# ---------------------------------ファイル内のオブジェクト情報----------------------------------------
+
+
+class project:
+    """ファイル内のオブジェクト情報
+
+    """
+    total_material_count: int = 0    # マテリアル数
+    material_names: list[str] = []   # マテリアル名
+    file_size: int = 0               # ファイルサイズ
+
+    def clear(self):
+        """class内保持情報初期化
+
+        """
+        self.total_material_count = 0
+        self.material_names.clear()
+        self.file_size = 0
+
+
+class error_messaga:
+    """エラーメッセージ
+
+    Args:
+        message (str) : エラーメッセージ
+        param (list[str]) : パラメータ
+        format (str) : フォーマット
+
+    """
+
+    def __init__(self, message: str = "unknown error message", param: list[str] = None, format: str = ""):
+        self.message = message
+        self.param = param
+        if len(format) <= 0:
+            self.format = f"{message} : {param}"
+        else:
+            self.format = format
+
 
 # -------------------------------PROPERTY---------------------------------------
 
@@ -47,74 +112,8 @@ class PETOOLS_PT_display_model_info(Panel):
     bl_label = "ファイル内モデル情報表示/保存"
     bl_options = {'DEFAULT_CLOSED'}
 
-    # ---------------------------------コレクション内オブジェクト情報--------------------------------------
-
-    class collection:
-        """コレクション内オブジェクト情報
-
-        """
-
-        def __init__(self):
-            self.total_vertex_count: int = 0      # 頂点数
-            self.total_material_count: int = 0    # マテリアル数
-            self.total_triangle_count: int = 0    # 三角形数
-            self.total_sarface_count: int = 0     # 面数
-            self.mesh_names: list[str] = []       # メッシュ名
-            self.material_names: list[str] = []   # マテリアル名
-            self.mesh_infos: list[dict] = []
-
-        def clear(self):
-            """初期化
-
-            """
-            self.total_vertex_count = 0
-            self.total_material_count = 0
-            self.total_triangle_count = 0
-            self.total_sarface_count = 0
-            self.mesh_names.clear()
-            self.material_names.clear()
-            self.mesh_infos.clear()
-
-    collection = collection()
-
-    # ---------------------------------ファイル内のオブジェクト情報----------------------------------------
-    class project:
-        """ファイル内のオブジェクト情報
-
-        """
-
-        def __init__(self):
-            self.total_material_count: int = 0    # マテリアル数
-            self.material_names: list[str] = []   # マテリアル名
-            self.file_size: int = 0               # ファイルサイズ
-
-        def clear(self):
-            """class内保持情報初期化
-
-            """
-            self.total_material_count = 0
-            self.material_names.clear()
-            self.file_size = 0
-
     project = project()
-
-    class error_messaga:
-        """エラーメッセージ
-
-        Args:
-            message (str) : エラーメッセージ
-            param (list[str]) : パラメータ
-            format (str) : フォーマット
-
-        """
-
-        def __init__(self, message: str = "unknown error message", param: list[str] = None, format: str = ""):
-            self.message = message
-            self.param = param
-            if len(format) <= 0:
-                self.format = f"{message} : {param}"
-            else:
-                self.format = format
+    collection = collection()
 
     class SaveFileInfoButton(Operator):
         """ファイル保存ボタン

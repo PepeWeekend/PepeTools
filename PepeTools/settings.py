@@ -4,6 +4,9 @@
 このファイルはPepeToolsアドオンの設定ファイルです。
 PepeToolsはPepe Weekendによって開発されたBlenderのツールセットです。
 """
+
+# -- PepeTools Defines --------------------------------------------------------------------------
+# Display Toolbar Name
 TAB_NAME = "PepeTools"
 
 from PepeTools.ui import wait_set_button
