@@ -7,9 +7,9 @@ except ImportError:
 
 import sys
 from .. import settings
-from PepeTools.util.debug_msg import OutputDebugString as ODS
 from PepeTools.util.debug_msg import call_log_decorator
 from PepeTools.util.get_classes import get_classes
+from PepeTools.util.debug_msg import logger
 
 # ----------------------------------PT------------------------------------------
 
@@ -97,7 +97,7 @@ class PETOOLS_PT_restart(Panel):
             -------
             {'FINISHED'}
             '''
-            ODS().output("Call", ODS.MsgType.Error)
+            logger.output("Call", logger.MsgType.Error)
             self.reboot_blender(context)
             return {'FINISHED'}
 

@@ -13,13 +13,10 @@ Subpackages
 Submodules
 ----------
 
-PepeTools.settings module
--------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: PepeTools.settings
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   PepeTools.settings
 
 Module contents
 ---------------

@@ -1,11 +1,14 @@
+# -*- coding: utf-8 -*-
+"""PepeToolsアドオンのモデル情報表示モジュール
+
+概要: モデル情報を表示するためのモジュール
+"""
+
 try:
     import bpy
     from bpy.types import Panel
     from bpy.types import Operator
     from bpy_types import PropertyGroup
-    from bpy.props import StringProperty
-    from bpy.props import BoolProperty
-    from bpy.props import IntProperty
 
 except ImportError:
     print(__doc__)
@@ -15,27 +18,26 @@ import os
 import datetime
 
 from .. import settings
-from ..util.debug_msg import call_log_decorator
-from ..util.debug_msg import logger
+from PepeTools.util.debug_msg import logger
+from PepeTools.util.debug_msg import call_log_decorator
 
 
 # -------------------------------PROPERTY---------------------------------------
 
 
 class PETOOLS_PT_display_model_info_props(PropertyGroup):
-    '''モデル情報を表示するためのプロパティグループ
-    '''
-    modelInfo: StringProperty(default="unknown", name="modelInfo")
-    is_auto_save: BoolProperty(default=False, name="Is Auto Save")
-    save_interval: IntProperty(default=10, min=1, name="Save Interval")
-    # timer_start_time: FloatProperty(name="Timer Start Time", default=0.0)
+    """モデル情報を表示するためのプロパティグループ
+
+    """
     pass
 
 
 # ----------------------------------PT------------------------------------------
 class PETOOLS_PT_display_model_info(Panel):
-    ''' モデル情報を表示するためのパネル
-    '''
+    """ モデル情報を表示するためのパネル
+
+    """
+
     # Override : 3Dビューに表示する
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -48,17 +50,23 @@ class PETOOLS_PT_display_model_info(Panel):
     # ---------------------------------コレクション内オブジェクト情報--------------------------------------
 
     class collection:
-        '''コレクション内オブジェクト情報
-        '''
-        total_vertex_count: int = 0      # 頂点数
-        total_material_count: int = 0    # マテリアル数
-        total_triangle_count: int = 0    # 三角形数
-        total_sarface_count: int = 0     # 面数
-        mesh_names: list[str] = []       # メッシュ名
-        material_names: list[str] = []   # マテリアル名
-        mesh_infos: list[dict] = []
+        """コレクション内オブジェクト情報
+
+        """
+
+        def __init__(self):
+            self.total_vertex_count: int = 0      # 頂点数
+            self.total_material_count: int = 0    # マテリアル数
+            self.total_triangle_count: int = 0    # 三角形数
+            self.total_sarface_count: int = 0     # 面数
+            self.mesh_names: list[str] = []       # メッシュ名
+            self.material_names: list[str] = []   # マテリアル名
+            self.mesh_infos: list[dict] = []
 
         def clear(self):
+            """初期化
+
+            """
             self.total_vertex_count = 0
             self.total_material_count = 0
             self.total_triangle_count = 0
@@ -71,13 +79,19 @@ class PETOOLS_PT_display_model_info(Panel):
 
     # ---------------------------------ファイル内のオブジェクト情報----------------------------------------
     class project:
-        '''ファイル内のオブジェクト情報
-        '''
-        total_material_count: int = 0    # マテリアル数
-        material_names: list[str] = []   # マテリアル名
-        file_size: int = 0               # ファイルサイズ
+        """ファイル内のオブジェクト情報
+
+        """
+
+        def __init__(self):
+            self.total_material_count: int = 0    # マテリアル数
+            self.material_names: list[str] = []   # マテリアル名
+            self.file_size: int = 0               # ファイルサイズ
 
         def clear(self):
+            """class内保持情報初期化
+
+            """
             self.total_material_count = 0
             self.material_names.clear()
             self.file_size = 0
@@ -85,11 +99,14 @@ class PETOOLS_PT_display_model_info(Panel):
     project = project()
 
     class error_messaga:
-        '''エラーメッセージ
-        '''
-        message: str = ""
-        param: list[str] = []
-        format: str = f"{message} : {param}"
+        """エラーメッセージ
+
+        Args:
+            message (str) : エラーメッセージ
+            param (list[str]) : パラメータ
+            format (str) : フォーマット
+
+        """
 
         def __init__(self, message: str = "unknown error message", param: list[str] = None, format: str = ""):
             self.message = message
@@ -100,12 +117,26 @@ class PETOOLS_PT_display_model_info(Panel):
                 self.format = format
 
     class SaveFileInfoButton(Operator):
-        '''ファイル情報を保存するボタン
-        '''
+        """ファイル保存ボタン
+
+        Args:
+            Operator (bpy.types.Operator) : Blender Operator
+        """
         bl_idname = "pepe.btn_kind2"
         bl_label = "MyButton2"
 
-        def execute(self, context):
+        def execute(self, context) -> dict[str]:
+            """ボタン押下時実行処理
+
+            Args:
+                context (bpy.context) : コンテキスト
+
+            Returns:
+                dict[str] : 処理終了状態
+
+                {'FINISHED'} : 正常終了
+
+            """
             op_cls = PETOOLS_PT_display_model_info
 
             op_cls.collection.clear()
@@ -123,6 +154,12 @@ class PETOOLS_PT_display_model_info(Panel):
             return {'FINISHED'}
 
     def save_handler(scene):
+        """ファイル保存ハンドラ
+
+        Args:
+            scene (bpy.types.Scene) : シーン情報
+
+        """
         logger.output("File Save Process Start......", logger.MsgType.Info)
 
         try:
@@ -153,15 +190,13 @@ class PETOOLS_PT_display_model_info(Panel):
         except Exception as e:
             logger.output(f"File Save Process Error : {e}", logger.MsgType.Error)
 
-        pass
-
     def draw(self, context):
-        '''描画処理
-        args:
-            context : bpy.context
-        return:
-            None
-        '''
+        """パネル描画処理
+
+        Args:
+            context (bpy.context) : コンテキスト
+
+        """
         layout = self.layout
 
         self.collection.clear()
@@ -178,12 +213,12 @@ class PETOOLS_PT_display_model_info(Panel):
 
     @classmethod
     def _update_file_info(self, context):
-        '''ファイル情報を更新する
-        args:
-            context : bpy.context
-        return:
-            None
-        '''
+        """ファイル情報更新
+
+        Args:
+            context (bpy.context) : コンテキスト
+
+        """
         # 存在オブジェクトの情報
         for obj in bpy.context.scene.objects:
             if obj is not None and obj.type == 'MESH':
@@ -225,12 +260,13 @@ class PETOOLS_PT_display_model_info(Panel):
         self.project.file_size_mb = file_size
 
     def _draw_panel(self, context, layout, err_msgs):
-        '''パネルを描画する
-        args:
-            layout : bpy.types.UILayout
-        return:
-            None
-        '''
+        """パネルを描画する
+
+        Args:
+            layout (bpy.types.UILayout) : レイアウト
+            err_msgs (list[str]) : エラーメッセージ
+
+        """
         # --------------------------------------------------------------------------------------
         # Infomation
         # --------------------------------------------------------------------------------------
@@ -259,10 +295,12 @@ class PETOOLS_PT_display_model_info(Panel):
 
     @classmethod
     def _check_file_different(self) -> list[str]:
-        '''ファイル内の情報が異なるか確認する
-        return:
+        """ファイル内の情報が異なるか確認する
+
+        Returns:
             disp_err_msg : list[str]
-        '''
+
+        """
         disp_err_msg: list[self.error_messaga] = []
 
         # 未保存のファイルを捜査している場合
@@ -281,13 +319,13 @@ class PETOOLS_PT_display_model_info(Panel):
 
     @classmethod
     def _save_file(self, context, disp_err_msg: list[str] = None):
-        '''ファイルを保存する
-        args:
-            context : bpy.context
-            disp_err_msg : list[str]
-        return:
-            None
-        '''
+        """ファイルを保存する
+
+        Args:
+            context (bpy.context) : コンテキスト
+            disp_err_msg (list[str]) : エラーメッセージ
+
+        """
         # --------------------------------------------------------------------------------------
         # Infomation File output
         # --------------------------------------------------------------------------------------
@@ -410,8 +448,7 @@ classes = [
 
 @ call_log_decorator
 def register():
-    """
-    クラス登録
+    """クラス登録
     """
     for cls in classes:
         logger.output(f"Register Class : {cls}", logger.MsgType.Info)
@@ -427,8 +464,7 @@ def register():
 
 @ call_log_decorator
 def unregister():
-    """
-    クラス登録を解除
+    """クラス解除
     """
     for cls in classes:
         bpy.utils.unregister_class(cls)

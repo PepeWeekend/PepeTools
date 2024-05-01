@@ -24,7 +24,7 @@ if errorlevel 9009 (
 )
 
 if "%1" == "" goto help
-	sphinx-apidoc -f -o %SOURCEDIR%/modules ../
+	sphinx-apidoc -f -e -o %SOURCEDIR%/modules ../
 	echo sphinx-apidoc -f -o %SOURCEDIR%/modules ../PepeTools/ui
 	%SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end

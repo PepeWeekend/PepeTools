@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
-PepeToolsアドオンのエントリーポイント
+"""PepeToolsアドオンのエントリーポイント
 
-@file __init__.py
-@brief PepeToolsアドオンのエントリーポイント
-@details このファイルはPepeToolsアドオンのエントリーポイントです。
+概要: PepeToolsアドオンのエントリーポイント
+詳細: このファイルはPepeToolsアドオンのエントリーポイントです。
 PepeToolsはPepe Weekendによって開発されたBlenderのツールセットです。
-
-@author Pepe Weekend
-@version 1.0.0
-@license GNU General Public License v3.0 (https://www.gnu.org/licenses/gpl-3.0.html)
-@date 2024-04-30 初版作成
 """
+
+
 try:
     import bpy
 except ImportError:
@@ -20,7 +15,7 @@ except ImportError:
     sys.exit()
 
 from PepeTools.settings import ENABLE_FUNCTION_LIST
-from PepeTools.settings import logger
+from PepeTools.util.debug_msg import logger
 
 ADDON_FOLDER_NAME = "PepeTools"
 ADDON_FOLDER_NAME_UI = "ui"
@@ -84,9 +79,8 @@ register_list = ENABLE_FUNCTION_LIST
 
 
 def register():
-    '''!
-    @brief アドオン登録
-    '''
+    """アドオン登録
+    """
     logger.output("PepeTools Regist Start!!", logger.MsgType.System)
 
     # クラス登録
@@ -104,9 +98,8 @@ def register():
 
 
 def unregister():
-    '''!
-    @brief アドオン解除
-    '''
+    """アドオン解除
+    """
     logger.output("PepeTools UnRegist Start!!", logger.MsgType.System)
 
     # 機能解除

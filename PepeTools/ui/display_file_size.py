@@ -9,9 +9,9 @@ import blf
 
 
 from .. import settings
-from PepeTools.util.debug_msg import OutputDebugString as ODS
 from PepeTools.util.debug_msg import call_log_decorator
 from PepeTools.util.get_classes import get_classes
+from PepeTools.util.debug_msg import logger
 
 font_info = {
     "font_id": 0,
@@ -195,7 +195,7 @@ classes = list(get_classes(sys.modules[__name__], __name__))
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-        ODS().output(f"Register Class : {cls}", ODS.MsgType.Info)
+        logger.output(f"Register Class : {cls}", logger.MsgType.Info)
 
     # Register the property group
     # bpy.types.Scene.templateProps = PointerProperty(type=PETOOLS_PT_TemplateProps)

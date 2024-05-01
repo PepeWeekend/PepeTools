@@ -5,7 +5,7 @@ from bpy.types import Operator
 from bpy.props import PointerProperty
 
 from .. import settings
-from PepeTools.util.debug_msg import outputDebugString
+from PepeTools.util.debug_msg import logger
 
 
 class PETOOLS_PT_TemplateProps(PropertyGroup):
@@ -48,7 +48,7 @@ class MyButton1(Operator):
     bl_label = "MyButton1"
 
     def execute(self, context):
-        outputDebugString("Call")
+        logger.output("Call")
         return {'FINISHED'}
 
 
@@ -61,7 +61,7 @@ classes = [
 
 
 def register():
-    outputDebugString("Call")
+    logger.output("Call")
     # Register the panel
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -72,7 +72,7 @@ def register():
 
 # Unregister the panel
 def unregister():
-    outputDebugString("Call")
+    logger.output("Call")
     # Unregister the panel
     for cls in classes:
         bpy.utils.unregister_class(cls)

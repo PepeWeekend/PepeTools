@@ -1,11 +1,14 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
+"""PepeToolsアドオンのユーティリティ関数を提供するモジュール
+
+ファイル: get_classes.py
+説明: 指定されたモジュール内のクラスを取得する関数を提供します。
+"""
 import inspect
 
 
-def get_classes(modules, fileName):
-    """
-    指定されたモジュール内のクラスを取得するジェネレータ関数です。
+def get_classes(modules, fileName) -> list:
+    """指定されたモジュール内のクラスを取得するジェネレータ関数です。
 
     Args:
         modules: クラスを検索するモジュール
@@ -23,8 +26,7 @@ def get_classes(modules, fileName):
 
 
 def get_classes_of_class(modules, baseClass, fileName):
-    """
-    Returns a generator that yields all classes derived from `baseClass` within the specified `modules` and `fileName`.
+    """Returns a generator that yields all classes derived from `baseClass` within the specified `modules` and `fileName`.
 
     Args:
         modules (module or list): The module or list of modules to search for classes.
