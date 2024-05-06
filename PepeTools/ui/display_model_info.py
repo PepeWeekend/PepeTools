@@ -293,26 +293,26 @@ class PETOOLS_PT_display_model_info(Panel):
                 box.label(text=msg.format)
 
     @classmethod
-    def _check_file_different(self) -> list[str]:
+    def _check_file_different(self) -> list[error_messaga]:
         """ファイル内の情報が異なるか確認する
 
         Returns:
             disp_err_msg : list[str]
 
         """
-        disp_err_msg: list[self.error_messaga] = []
+        disp_err_msg: list[error_messaga] = []
 
         # 未保存のファイルを捜査している場合
         if self.project.file_size_mb == 0:
             ERROR_MSG_NON_FILE = "編集中のファイルが未保存状態です"
-            disp_err_msg.append(self.error_messaga(ERROR_MSG_NON_FILE))
+            disp_err_msg.append(error_messaga(ERROR_MSG_NON_FILE))
 
         # ファイル内のマテリアル定義数が異なる場合
         ERROR_MSG_MATERIALS_DIFFERENT = "ファイル内に余分なマテリアルが含まれています"
         if len(self.collection.material_names) != len(self.project.material_names):
             diff_materials = set(self.collection.material_names) ^ set(self.project.material_names)
             for diff in diff_materials:
-                disp_err_msg.append(self.error_messaga(ERROR_MSG_MATERIALS_DIFFERENT, diff))
+                disp_err_msg.append(error_messaga(ERROR_MSG_MATERIALS_DIFFERENT, diff))
 
         return disp_err_msg
 
